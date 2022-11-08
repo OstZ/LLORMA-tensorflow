@@ -12,6 +12,7 @@ from base.rprop import RPropOptimizer
 def init_models_for_pre_train(batch_manager):
     def _create_p_or_q_variable(n, rank, batch_manager):
         # TODO: 밖으로 꺼내야 함.
+        #按特定分布初始化p,q
         mu = batch_manager.mu
         std = batch_manager.std
 
@@ -31,6 +32,9 @@ def init_models_for_pre_train(batch_manager):
     p = _create_p_or_q_variable(n_row, PRE_RANK, batch_manager)
     q = _create_p_or_q_variable(n_col, PRE_RANK, batch_manager)
 
+    #利用lookup使p,q按行序号与用户特征向量对应
+    #定义矩阵分解模型
+    #
     p_lookup = tf.nn.embedding_lookup(p, u)
     q_lookup = tf.nn.embedding_lookup(q, i)
     r_hat = tf.reduce_sum(tf.multiply(p_lookup, q_lookup), 1)
@@ -61,11 +65,13 @@ def init_models_for_pre_train(batch_manager):
 
 
 def init_models(batch_manager):
+    #simple matrix factorization with weight model
     n_row, n_col = batch_manager.n_user, batch_manager.n_item
 
     u = tf.placeholder(tf.int64, [None], name='u')
     i = tf.placeholder(tf.int64, [None], name='i')
     r = tf.placeholder(tf.float32, [None], name='r')
+    #add weight for square error
     k = tf.placeholder(tf.float32, [None], name='k')
 
     # train_u = tf.constant(
@@ -102,6 +108,7 @@ def init_models(batch_manager):
     # local_optimizer = tf.train.MomentumOptimizer(LOCAL_LEARNING_RATE, 0.9)
     # _optimizer = tf.train.MomentumOptimizer(LEARNING_RATE, 0.9)
     # _optimizer = tf.train.AdamOptimizer(LEARNING_RATE)
+    #a step to update local_p,local_q
     local_optimizer = tf.train.GradientDescentOptimizer(LOCAL_LEARNING_RATE)
     local_train_op = local_optimizer.minimize(
         local_loss, var_list=[local_p, local_q])
@@ -113,7 +120,7 @@ def init_models(batch_manager):
         'k': k,
         'local_p': local_p,
         'local_q': local_q,
-        'local_r_hat': local_r_hat,
+        'local_r_hat': local_r_hat,#list of predicted ratings
         'local_train_op': local_train_op,
         'local_sse': local_sse,
     }

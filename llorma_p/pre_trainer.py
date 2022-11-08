@@ -30,7 +30,7 @@ def _validate(session, batch_manager, models):
 
     return valid_rmse, test_rmse
 
-
+#use simple matrix factorization with rmse loss to train user,item embeddings
 def get_p_and_q(kind, use_cache=True):
     if use_cache:
         try:

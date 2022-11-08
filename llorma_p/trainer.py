@@ -58,6 +58,7 @@ def _get_rmses(local_models, batch_manager):
 
 
 def _train(kind):
+    #trained embeddings
     row_latent_init, col_latent_init = pre_trainer.get_p_and_q(
         kind, use_cache=USE_CACHE)
 
@@ -71,6 +72,7 @@ def _train(kind):
         batch_manager,
         row_latent_init,
         col_latent_init, )
+    #the number of local models is N_ANCHOR
     local_models = [
         LocalModel(session, models, anchor_idx, anchor_manager, batch_manager)
         for anchor_idx in range(N_ANCHOR)

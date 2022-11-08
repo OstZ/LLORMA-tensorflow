@@ -7,6 +7,7 @@ from .configs import *
 
 
 def _create_p_or_q(n, rank, batch_manager):
+    #initialize p,q according to specfific distribution
     mu = batch_manager.mu
     std = batch_manager.std
 
@@ -16,10 +17,10 @@ def _create_p_or_q(n, rank, batch_manager):
 
 
 def _assign_p_and_q(session, models, p, q):
-    p_assign_op = models['local_p'].assign(p)
+    p_assign_op = models['local_p'].assign(p)#return op which assigns p to model['local_p']
     q_assign_op = models['local_q'].assign(q)
 
-    session.run((p_assign_op, q_assign_op))
+    session.run((p_assign_op, q_assign_op))#run the op to actually assign the value
 
 
 class LocalModel:
@@ -41,7 +42,7 @@ class LocalModel:
 
         _assign_p_and_q(session, models, self.p, self.q)
         self._update_r_hats()
-
+    #update predicted ratings of train and test set
     def _update_r_hats(self):
         session = self.session
         models = self.models

@@ -3,7 +3,8 @@ import numpy as np
 from base.dataset import DatasetManager
 from .configs import *
 
-
+#use BatchManager to get train/val/test data,num_user,num_item,mean and std of ratings
+#in train
 class BatchManager:
     def __init__(self, kind):
         self.kind = kind
