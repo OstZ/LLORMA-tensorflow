@@ -10,7 +10,9 @@ def _make_dir_if_not_exists(path):
     if not os.path.exists(path):
         os.mkdir(path)
 
-
+#load data
+#split data
+#save splited data
 class DatasetManager:
     KIND_MOVIELENS_100K = 'movielens-100k'
     KIND_MOVIELENS_1M = 'movielens-1m'
@@ -41,6 +43,9 @@ class DatasetManager:
             os.system(
                 'unzip data/{kind}.zip -d data/{kind}/'.format(kind=self.kind))
 
+    #create a map to map indices to continues [0, N) range
+    #create (u,i,r,t) data in proper indices
+    #create data in data.npy
     def __init_data(self, detail_path, delimiter, header=False):
         current_u = 0
         u_dict = {}
@@ -95,6 +100,7 @@ class DatasetManager:
     def _load_base_data(self):
         return np.load('data/{}/data.npy'.format(self.kind))
 
+    #split train val test split
     def _split_data(self):
         data = self.data
         n_shot = self.n_shot
